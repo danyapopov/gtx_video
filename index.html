@@ -55,10 +55,10 @@
     // Ініціалізація YouTube-плеєра
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        videoId: 'dQw4w9WgXcQ', // Замініть на ваш реальний ID відео
+        videoId: '3PZ65s2qLTE', // Замініть на ваш реальний ID відео
         playerVars: {
           autoplay: 1,
-          mute: 1, // Без звуку для автозапуску
+          mute: 1, // Відео завжди без звуку
           controls: 0,
           modestbranding: 1,
           iv_load_policy: 3,
@@ -76,15 +76,6 @@
     // Коли плеєр готовий
     function onPlayerReady(event) {
       event.target.playVideo();
-      // Відкладаємо увімкнення звуку на 2 секунди і перевіряємо стан
-      setTimeout(() => {
-        if (event.target.getPlayerState() === YT.PlayerState.PLAYING) {
-          event.target.unMute();
-          console.log('Звук увімкнено');
-        } else {
-          console.log('Відео не відтворюється, звук не вмикається');
-        }
-      }, 2000); // Збільшено до 2 секунд для стабільності
       // Запускаємо цикл заставки через 15 секунд
       setTimeout(startSplashCycle, splashInterval);
     }
