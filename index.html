@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube + Splash Video Loop</title>
+    <title>Tizen-Compatible YouTube & Splash Video</title>
     <style>
         body {
             margin: 0;
@@ -27,19 +27,19 @@
             position: absolute;
             z-index: 2;
             display: none; /* Hidden initially */
-            background-color: black; /* Avoids flickering on load */
+            background-color: black; /* Prevent flickering */
         }
     </style>
 </head>
 <body>
 
 <div id="video-container">
-    <!-- YouTube Video Playing in the Background (Muted & Autoplayed) -->
+    <!-- YouTube Video (Muted & Autoplayed in Background) -->
     <iframe 
         id="youtube-video" 
-        src="https://www.youtube.com/embed/PyFN_FYwqvc?autoplay=1&mute=1&enablejsapi=1" 
+        src="https://www.youtube.com/embed/PyFN_FYwqvc?autoplay=1&mute=1" 
         frameborder="0" 
-        allow="autoplay; fullscreen">
+        allow="autoplay">
     </iframe>
 
     <!-- Splash Video (Overlayed) -->
@@ -57,7 +57,7 @@
         // When splash video ends, hide it and restart the cycle
         splashVideo.onended = function() {
             splashVideo.style.display = "none";
-            setTimeout(playSplashVideo, 15000); // Wait 15 seconds before playing again
+            setTimeout(playSplashVideo, 15000); // Restart after 15 seconds
         };
     }
 
