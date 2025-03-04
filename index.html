@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cycling Video</title>
+    <title>Overlay Splash Video</title>
     <style>
         body {
             margin: 0;
@@ -15,71 +15,53 @@
             height: 100vh;
             position: relative;
         }
-        iframe, video {
+        iframe {
             width: 100%;
             height: 100%;
             position: absolute;
+            z-index: 1;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            z-index: 2;
+            display: none; /* Initially hidden */
         }
     </style>
 </head>
 <body>
 
 <div id="video-container">
-    <iframe id="youtube-video" src="https://www.youtube.com/embed/WsX_SOsgvPI?autoplay=1&mute=1&enablejsapi=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+    <!-- YouTube Video Playing in the Background (Muted & Autoplayed) -->
+    <iframe 
+        id="youtube-video" 
+        src="https://www.youtube.com/embed/PyFN_FYwqvc?autoplay=1&mute=1&enablejsapi=1" 
+        frameborder="0" 
+        allow="autoplay; fullscreen">
+    </iframe>
+
+    <!-- Splash Video (Muted & Autoplayed When Triggered) -->
+    <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted></video>
 </div>
 
 <script>
-    function switchToSplashVideo() {
-        let container = document.getElementById("video-container");
+    function playSplashVideo() {
+        let splashVideo = document.getElementById("splash-video");
 
-        // Remove YouTube video
-        let ytVideo = document.getElementById("youtube-video");
-        if (ytVideo) ytVideo.remove();
+        // Show and play the splash video
+        splashVideo.style.display = "block";
+        splashVideo.play();
 
-        // Create Splash Video Element
-        let splashVideo = document.createElement("video");
-        splashVideo.src = "https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4";
-        splashVideo.autoplay = true;
-        splashVideo.controls = false;
-        splashVideo.style.width = "100%";
-        splashVideo.style.height = "100%";
-        splashVideo.style.position = "absolute";
-        splashVideo.style.top = "0";
-        splashVideo.style.left = "0";
-        splashVideo.id = "splash-video";
-
-        container.appendChild(splashVideo);
-
-        // When splash video ends, switch back to YouTube
+        // When splash video ends, hide it again
         splashVideo.onended = function() {
-            splashVideo.remove();
-            addYouTubeVideo();
+            splashVideo.style.display = "none";
         };
     }
 
-    function addYouTubeVideo() {
-        let container = document.getElementById("video-container");
-        let ytIframe = document.createElement("iframe");
-        ytIframe.src = "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&mute=1&enablejsapi=1";
-        ytIframe.id = "youtube-video";
-        ytIframe.frameBorder = "0";
-        ytIframe.allow = "autoplay; fullscreen";
-        ytIframe.style.width = "100%";
-        ytIframe.style.height = "100%";
-        ytIframe.style.position = "absolute";
-        ytIframe.style.top = "0";
-        ytIframe.style.left = "0";
-
-        container.appendChild(ytIframe);
-
-        // Switch to Splash Video after 15 seconds
-        setTimeout(switchToSplashVideo, 15000);
-    }
-
-    // Start the cycle
-    setTimeout(switchToSplashVideo, 15000);
+    // Run the splash video every 15 seconds
+    setInterval(playSplashVideo, 15000);
 </script>
 
 </body>
 </html>
-
