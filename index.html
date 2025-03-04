@@ -23,11 +23,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      transition: opacity 1s;
+      transition: opacity 1s ease-in-out;
     }
     #splash {
       opacity: 0;
-      z-index: 10; /* Щоб заставка була над YouTube */
+      z-index: 10; /* Splash on top of YouTube */
     }
     video {
       width: 100%;
@@ -50,22 +50,15 @@
   <script>
     let player;
     const splash = document.getElementById('splash');
+    const splashInterval = 15000; // 15 seconds
 
-    // Перевірка готовності відео-заставки
-    splash.addEventListener('canplay', () => {
-      console.log('Відео-заставка готова до відтворення');
-    });
-    splash.addEventListener('error', (e) => {
-      console.error('Помилка завантаження відео-заставки:', e);
-    });
-
-    // Ініціалізація YouTube плеєра
+    // YouTube Player Initialization
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        videoId: '3PZ65s2qLTE', // Перевірте, чи правильний ID
+        videoId: '3PZ65s2qLTE', // Replace with your actual YouTube video ID
         playerVars: {
           autoplay: 1,
-          mute: 1, // Починаємо з вимкненим звуком для автозапуску
+          mute: 1, // Muted for autoplay compliance
           controls: 0,
           modestbranding: 1,
           iv_load_policy: 3,
@@ -80,50 +73,56 @@
       });
     }
 
-    // Коли плеєр готовий
+    // When YouTube player is ready
     function onPlayerReady(event) {
       event.target.playVideo();
       setTimeout(() => {
-        event.target.unMute(); // Вмикаємо звук через 1 секунду
-        startSplashCycle(); // Починаємо цикл заставки
+        event.target.unMute(); // Unmute after 1 second
       }, 1000);
+      startSplashCycle(); // Start the splash cycle
     }
 
-    // Перевірка стану відтворення
+    // Monitor YouTube player state
     function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.PLAYING) {
-        console.log('YouTube-відео відтворюється');
-      } else if (event.data === YT.PlayerState.ENDED) {
-        player.playVideo(); // Перезапуск, якщо відео закінчилося
+      if (event.data === YT.PlayerState.ENDED) {
+        player.playVideo(); // Restart if YouTube video ends
       }
     }
 
-    // Обробка помилок YouTube
+    // Handle YouTube errors
     function onPlayerError(event) {
-      console.error('Помилка YouTube плеєра:', event.data);
+      console.error('YouTube Player Error:', event.data);
     }
 
-    // Запуск заставки
+    // Play splash video
     function playSplash() {
       splash.currentTime = 0;
       splash.style.opacity = 1;
-      player.pauseVideo(); // Призупиняємо YouTube під час заставки
+      player.pauseVideo();
       splash.play().catch((error) => {
-        console.error('Помилка відтворення заставки:', error);
-        splash.style.opacity = 0; // При помилці ховаємо заставку
+        console.error('Splash Playback Error:', error);
+        splash.style.opacity = 0;
         player.playVideo();
       });
     }
 
-    // Логіка циклу заставки
+    // Splash video cycle
     function startSplashCycle() {
       playSplash();
-      splash.addEventListener('ended', () => {
+      splash.onended = () => {
         splash.style.opacity = 0;
-        player.playVideo(); // Відновлюємо YouTube
-        setTimeout(startSplashCycle, 15000); // Повтор через 15 секунд
-      }, { once: true }); // Слухач викликається лише раз
+        player.playVideo();
+        setTimeout(startSplashCycle, splashInterval); // Repeat after 15 seconds
+      };
     }
+
+    // Debug splash video readiness
+    splash.addEventListener('canplay', () => {
+      console.log('Splash video ready to play');
+    });
+    splash.addEventListener('error', (e) => {
+      console.error('Splash video load error:', e);
+    });
   </script>
 </body>
 </html>
