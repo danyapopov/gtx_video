@@ -1,1 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube with Overlay</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: black; }
+        #youtubeFrame, #splash { position: absolute; width: 100vw; height: 100vh; top: 0; left: 0; border: none; }
+        
+        /* Стилі для плавного появлення/зникнення */
+        #splash { 
+            display: flex; 
+            background: black; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 100; 
+            opacity: 0; 
+            transition: opacity 1s ease-in-out;
+        }
 
+        video { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+    <iframe id="youtubeFrame" src="https://www.youtube.com" allowfullscreen></iframe>
+    <div id="splash">
+        <video id="splashVideo" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted autoplay playsinline></video>
+    </div>
+
+    <script>
+        let splash = document.getElementById('splash');
+        let splashVideo = document.getElementById('splashVideo');
+
+        function showSplash() {
+            splash.style.opacity = '1'; // Плавне з’явлення
+            splashVideo.play();
+
+            splashVideo.onended = () => {
+                splash.style.opacity = '0'; // Плавне зникнення
+            };
+        }
+
+        setInterval(showSplash, 15000); // Кожні 15 секунд запускаємо заставку
+    </script>
+
+</body>
+</html>
