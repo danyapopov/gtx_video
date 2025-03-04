@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlay Splash Video</title>
+    <title>YouTube + Splash Video Loop</title>
     <style>
         body {
             margin: 0;
@@ -26,7 +26,8 @@
             height: 100%;
             position: absolute;
             z-index: 2;
-            display: none; /* Initially hidden */
+            display: none; /* Hidden initially */
+            background-color: black; /* Avoids flickering on load */
         }
     </style>
 </head>
@@ -41,7 +42,7 @@
         allow="autoplay; fullscreen">
     </iframe>
 
-    <!-- Splash Video (Muted & Autoplayed When Triggered) -->
+    <!-- Splash Video (Overlayed) -->
     <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted></video>
 </div>
 
@@ -53,14 +54,15 @@
         splashVideo.style.display = "block";
         splashVideo.play();
 
-        // When splash video ends, hide it again
+        // When splash video ends, hide it and restart the cycle
         splashVideo.onended = function() {
             splashVideo.style.display = "none";
+            setTimeout(playSplashVideo, 15000); // Wait 15 seconds before playing again
         };
     }
 
-    // Run the splash video every 15 seconds
-    setInterval(playSplashVideo, 15000);
+    // Start the first splash video after 15 seconds
+    setTimeout(playSplashVideo, 15000);
 </script>
 
 </body>
