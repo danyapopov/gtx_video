@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Switch Video</title>
+    <title>Cycling Video</title>
     <style>
         body {
             margin: 0;
@@ -25,16 +25,18 @@
 <body>
 
 <div id="video-container">
-    <!-- YouTube Video -->
-    <iframe id="youtube-video" src="https://www.youtube.com/embed/Bxo2JkiqG_o?autoplay=1&mute=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+    <iframe id="youtube-video" src="https://www.youtube.com/embed/WsX_SOsgvPI?autoplay=1&mute=1&enablejsapi=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
 </div>
 
 <script>
-    setTimeout(() => {
-        // Remove YouTube video
-        document.getElementById("youtube-video").remove();
+    function switchToSplashVideo() {
+        let container = document.getElementById("video-container");
 
-        // Create and play splash video
+        // Remove YouTube video
+        let ytVideo = document.getElementById("youtube-video");
+        if (ytVideo) ytVideo.remove();
+
+        // Create Splash Video Element
         let splashVideo = document.createElement("video");
         splashVideo.src = "https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4";
         splashVideo.autoplay = true;
@@ -44,10 +46,40 @@
         splashVideo.style.position = "absolute";
         splashVideo.style.top = "0";
         splashVideo.style.left = "0";
+        splashVideo.id = "splash-video";
 
-        document.getElementById("video-container").appendChild(splashVideo);
-    }, 15000);
+        container.appendChild(splashVideo);
+
+        // When splash video ends, switch back to YouTube
+        splashVideo.onended = function() {
+            splashVideo.remove();
+            addYouTubeVideo();
+        };
+    }
+
+    function addYouTubeVideo() {
+        let container = document.getElementById("video-container");
+        let ytIframe = document.createElement("iframe");
+        ytIframe.src = "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&mute=1&enablejsapi=1";
+        ytIframe.id = "youtube-video";
+        ytIframe.frameBorder = "0";
+        ytIframe.allow = "autoplay; fullscreen";
+        ytIframe.style.width = "100%";
+        ytIframe.style.height = "100%";
+        ytIframe.style.position = "absolute";
+        ytIframe.style.top = "0";
+        ytIframe.style.left = "0";
+
+        container.appendChild(ytIframe);
+
+        // Switch to Splash Video after 15 seconds
+        setTimeout(switchToSplashVideo, 15000);
+    }
+
+    // Start the cycle
+    setTimeout(switchToSplashVideo, 15000);
 </script>
 
 </body>
 </html>
+
