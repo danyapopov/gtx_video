@@ -27,7 +27,7 @@
     }
     #splash {
       opacity: 0;
-      z-index: 10; /* Splash on top of YouTube */
+      z-index: 10; /* Заставка поверх YouTube */
     }
     video {
       width: 100%;
@@ -50,15 +50,15 @@
   <script>
     let player;
     const splash = document.getElementById('splash');
-    const splashInterval = 15000; // 15 seconds
+    const splashInterval = 15000; // 15 секунд
 
-    // YouTube Player Initialization
+    // Ініціалізація YouTube-плеєра
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        videoId: '3PZ65s2qLTE', // Replace with your actual YouTube video ID
+        videoId: 'dQw4w9WgXcQ', // Замініть на ваш реальний ID відео
         playerVars: {
           autoplay: 1,
-          mute: 1, // Muted for autoplay compliance
+          mute: 1, // Без звуку для автозапуску
           controls: 0,
           modestbranding: 1,
           iv_load_policy: 3,
@@ -73,55 +73,56 @@
       });
     }
 
-    // When YouTube player is ready
+    // Коли плеєр готовий
     function onPlayerReady(event) {
       event.target.playVideo();
       setTimeout(() => {
-        event.target.unMute(); // Unmute after 1 second
+        event.target.unMute(); // Вмикаємо звук через 1 секунду
       }, 1000);
-      startSplashCycle(); // Start the splash cycle
+      // Запускаємо цикл заставки через 15 секунд після старту YouTube
+      setTimeout(startSplashCycle, splashInterval);
     }
 
-    // Monitor YouTube player state
+    // Моніторинг стану YouTube
     function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.ENDED) {
-        player.playVideo(); // Restart if YouTube video ends
+        player.playVideo(); // Перезапуск, якщо відео закінчилося
       }
     }
 
-    // Handle YouTube errors
+    // Обробка помилок YouTube
     function onPlayerError(event) {
-      console.error('YouTube Player Error:', event.data);
+      console.error('Помилка YouTube-плеєра:', event.data);
     }
 
-    // Play splash video
+    // Відтворення заставки
     function playSplash() {
       splash.currentTime = 0;
       splash.style.opacity = 1;
       player.pauseVideo();
       splash.play().catch((error) => {
-        console.error('Splash Playback Error:', error);
+        console.error('Помилка відтворення заставки:', error);
         splash.style.opacity = 0;
         player.playVideo();
       });
     }
 
-    // Splash video cycle
+    // Цикл заставки
     function startSplashCycle() {
       playSplash();
       splash.onended = () => {
         splash.style.opacity = 0;
         player.playVideo();
-        setTimeout(startSplashCycle, splashInterval); // Repeat after 15 seconds
+        setTimeout(startSplashCycle, splashInterval); // Повтор через 15 секунд
       };
     }
 
-    // Debug splash video readiness
+    // Діагностика готовності заставки
     splash.addEventListener('canplay', () => {
-      console.log('Splash video ready to play');
+      console.log('Заставка готова до відтворення');
     });
     splash.addEventListener('error', (e) => {
-      console.error('Splash video load error:', e);
+      console.error('Помилка завантаження заставки:', e);
     });
   </script>
 </body>
