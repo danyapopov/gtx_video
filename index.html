@@ -27,7 +27,7 @@
     }
     #splash {
       opacity: 0;
-      z-index: 10; /* Заставка поверх YouTube */
+      z-index: 10;
     }
     video {
       width: 100%;
@@ -76,17 +76,27 @@
     // Коли плеєр готовий
     function onPlayerReady(event) {
       event.target.playVideo();
+      // Відкладаємо увімкнення звуку на 2 секунди і перевіряємо стан
       setTimeout(() => {
-        event.target.unMute(); // Вмикаємо звук через 1 секунду
-      }, 1000);
-      // Запускаємо цикл заставки через 15 секунд після старту YouTube
+        if (event.target.getPlayerState() === YT.PlayerState.PLAYING) {
+          event.target.unMute();
+          console.log('Звук увімкнено');
+        } else {
+          console.log('Відео не відтворюється, звук не вмикається');
+        }
+      }, 2000); // Збільшено до 2 секунд для стабільності
+      // Запускаємо цикл заставки через 15 секунд
       setTimeout(startSplashCycle, splashInterval);
     }
 
     // Моніторинг стану YouTube
     function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.ENDED) {
-        player.playVideo(); // Перезапуск, якщо відео закінчилося
+      console.log('Стан плеєра:', event.data);
+      if (event.data === YT.PlayerState.PAUSED) {
+        console.log('Відео на паузі, намагаємося відновити');
+        event.target.playVideo(); // Спроба відновити відтворення
+      } else if (event.data === YT.PlayerState.ENDED) {
+        event.target.playVideo(); // Перезапуск при завершенні
       }
     }
 
@@ -113,16 +123,16 @@
       splash.onended = () => {
         splash.style.opacity = 0;
         player.playVideo();
-        setTimeout(startSplashCycle, splashInterval); // Повтор через 15 секунд
+        setTimeout(startSplashCycle, splashInterval);
       };
     }
 
-    // Діагностика готовності заставки
+    // Діагностика заставки
     splash.addEventListener('canplay', () => {
-      console.log('Заставка готова до відтворення');
+      console.log('Заставка готова');
     });
     splash.addEventListener('error', (e) => {
-      console.error('Помилка завантаження заставки:', e);
+      console.error('Помилка заставки:', e);
     });
   </script>
 </body>
