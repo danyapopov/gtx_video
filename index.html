@@ -1,130 +1,53 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Перемикання між YouTube та заставкою</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-    #container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    #player,
-    #splash {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      transition: opacity 1s ease-in-out;
-    }
-    #splash {
-      opacity: 0;
-      z-index: 10;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Switch Video</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        #video-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        iframe, video {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+    </style>
 </head>
 <body>
-  <div id="container">
-    <div id="player"></div>
-    <video id="splash"
-           src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4"
-           playsinline
-           muted
-           preload="auto"></video>
-  </div>
 
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script>
-    let player;
-    const splash = document.getElementById('splash');
-    const splashInterval = 15000; // 15 секунд
+<div id="video-container">
+    <!-- YouTube Video -->
+    <iframe id="youtube-video" src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&mute=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+</div>
 
-    // Ініціалізація YouTube-плеєра
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        videoId: '3PZ65s2qLTE', // Замініть на ваш реальний ID відео
-        playerVars: {
-          autoplay: 1,
-          mute: 1, // Відео завжди без звуку
-          controls: 0,
-          modestbranding: 1,
-          iv_load_policy: 3,
-          fs: 1,
-          rel: 0
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange,
-          onError: onPlayerError
-        }
-      });
-    }
+<script>
+    setTimeout(() => {
+        // Remove YouTube video
+        document.getElementById("youtube-video").remove();
 
-    // Коли плеєр готовий
-    function onPlayerReady(event) {
-      event.target.playVideo();
-      // Запускаємо цикл заставки через 15 секунд
-      setTimeout(startSplashCycle, splashInterval);
-    }
+        // Create and play splash video
+        let splashVideo = document.createElement("video");
+        splashVideo.src = "https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4";
+        splashVideo.autoplay = true;
+        splashVideo.controls = false;
+        splashVideo.style.width = "100%";
+        splashVideo.style.height = "100%";
+        splashVideo.style.position = "absolute";
+        splashVideo.style.top = "0";
+        splashVideo.style.left = "0";
 
-    // Моніторинг стану YouTube
-    function onPlayerStateChange(event) {
-      console.log('Стан плеєра:', event.data);
-      if (event.data === YT.PlayerState.PAUSED) {
-        console.log('Відео на паузі, намагаємося відновити');
-        event.target.playVideo(); // Спроба відновити відтворення
-      } else if (event.data === YT.PlayerState.ENDED) {
-        event.target.playVideo(); // Перезапуск при завершенні
-      }
-    }
+        document.getElementById("video-container").appendChild(splashVideo);
+    }, 15000);
+</script>
 
-    // Обробка помилок YouTube
-    function onPlayerError(event) {
-      console.error('Помилка YouTube-плеєра:', event.data);
-    }
-
-    // Відтворення заставки
-    function playSplash() {
-      splash.currentTime = 0;
-      splash.style.opacity = 1;
-      player.pauseVideo();
-      splash.play().catch((error) => {
-        console.error('Помилка відтворення заставки:', error);
-        splash.style.opacity = 0;
-        player.playVideo();
-      });
-    }
-
-    // Цикл заставки
-    function startSplashCycle() {
-      playSplash();
-      splash.onended = () => {
-        splash.style.opacity = 0;
-        player.playVideo();
-        setTimeout(startSplashCycle, splashInterval);
-      };
-    }
-
-    // Діагностика заставки
-    splash.addEventListener('canplay', () => {
-      console.log('Заставка готова');
-    });
-    splash.addEventListener('error', (e) => {
-      console.error('Помилка заставки:', e);
-    });
-  </script>
 </body>
 </html>
