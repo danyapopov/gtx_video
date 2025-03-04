@@ -20,14 +20,15 @@
             height: 100%;
             position: absolute;
             z-index: 1;
+            visibility: visible; /* YouTube always stays active */
         }
         video {
             width: 100%;
             height: 100%;
             position: absolute;
             z-index: 2;
-            display: none; /* Hidden initially */
-            background-color: black; /* Prevent flickering */
+            visibility: hidden; /* Instead of display: none */
+            background-color: black;
         }
     </style>
 </head>
@@ -49,15 +50,20 @@
 <script>
     function playSplashVideo() {
         let splashVideo = document.getElementById("splash-video");
+        let youtubeVideo = document.getElementById("youtube-video");
 
+        // Make YouTube transparent (but keep it running)
+        youtubeVideo.style.visibility = "hidden";
+        
         // Show and play the splash video
-        splashVideo.style.display = "block";
+        splashVideo.style.visibility = "visible";
         splashVideo.play();
 
-        // When splash video ends, hide it and restart the cycle
+        // When splash video ends, restore YouTube
         splashVideo.onended = function() {
-            splashVideo.style.display = "none";
-            setTimeout(playSplashVideo, 15000); // Restart after 15 seconds
+            splashVideo.style.visibility = "hidden";
+            youtubeVideo.style.visibility = "visible";
+            setTimeout(playSplashVideo, 15000); // Restart cycle
         };
     }
 
