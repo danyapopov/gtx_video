@@ -9,21 +9,21 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #1a1a1a; /* Dark gray theme */
+            background-color: #1a1a1a;
         }
         #video-container {
             width: 100vw;
             height: 100vh;
             position: relative;
-            background-color: #333333; /* Medium gray container */
+            background-color: #333333;
         }
-        iframe {
+        #youtube-video {
             width: 100%;
             height: 100%;
             position: absolute;
             z-index: 1;
             transition: opacity 1.5s ease-in-out; /* 1.5s fade */
-            border: 2px solid #ffffff; /* White border */
+            border: 2px solid #ffffff;
             opacity: 1;
         }
         video {
@@ -33,41 +33,56 @@
             z-index: 2;
             opacity: 0;
             transition: opacity 1.5s ease-in-out; /* 1.5s fade */
-            background-color: #1a1a1a; /* Match body */
+            background-color: #1a1a1a;
             display: none;
             object-fit: cover; /* Fullscreen scaling */
         }
         .visible {
             display: block;
         }
-        .hidden-iframe {
-            visibility: hidden; /* Hide iframe without pausing */
-        }
     </style>
 </head>
 <body>
 
 <div id="video-container">
-    <!-- YouTube Video (Muted, Autoplayed, Looped) -->
-    <iframe 
-        id="youtube-video" 
-        src="https://www.youtube.com/embed/NoEIriuS0H8?autoplay=1&mute=1&loop=1&playlist=NoEIriuS0H8" 
-        frameborder="0" 
-        allow="autoplay">
-    </iframe>
+    <!-- YouTube Player Container -->
+    <div id="youtube-video"></div>
 
-    <!-- Splash Video (Overlayed) -->
+    <!-- Splash Video -->
     <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted></video>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
+    let player;
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player("youtube-video", {
+            width: "100%",
+            height: "100%",
+            videoId: "NoEIriuS0H8",
+            playerVars: {
+                autoplay: 1,
+                mute: 1,
+                loop: 1,
+                playlist: "NoEIriuS0H8"
+            },
+            events: {
+                onReady: onPlayerReady
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo();
+        setTimeout(playSplashVideo, 15000);
+    }
+
     function playSplashVideo() {
         let splashVideo = document.getElementById("splash-video");
         let youtubeVideo = document.getElementById("youtube-video");
 
-        youtubeVideo.classList.add("hidden-iframe");
         youtubeVideo.style.opacity = "0"; // Fade out over 1.5s
-
         splashVideo.classList.add("visible");
         splashVideo.style.opacity = "1"; // Fade in over 1.5s
         splashVideo.play().catch(err => {
@@ -77,11 +92,11 @@
 
         splashVideo.onended = function() {
             splashVideo.style.opacity = "0"; // Fade out over 1.5s
-            youtubeVideo.classList.remove("hidden-iframe");
             youtubeVideo.style.opacity = "1"; // Fade in over 1.5s
+            player.playVideo(); // Explicitly resume YouTube
             setTimeout(() => {
                 splashVideo.classList.remove("visible");
-                setTimeout(playSplashVideo, 15000); // Restart cycle
+                setTimeout(playSplashVideo, 15000);
             }, 1500); // Match 1.5s transition
         };
     }
@@ -91,11 +106,9 @@
         let youtubeVideo = document.getElementById("youtube-video");
         splashVideo.style.opacity = "0";
         splashVideo.classList.remove("visible");
-        youtubeVideo.classList.remove("hidden-iframe");
         youtubeVideo.style.opacity = "1";
+        player.playVideo();
     }
-
-    setTimeout(playSplashVideo, 15000);
 </script>
 
 </body>
