@@ -1,0 +1,15 @@
+{
+  "type": "pages",
+  "headline": "YouTube зі заставкою",
+  "template": {
+    "type": "separate",
+    "layout": "0,0,2,4",
+    "action": "video:plugin:https://msx.benzac.de/plugins/html5x/html5x.html?url=https://danyapopov.github.io/gtx_video/"
+  },
+  "items": [
+    {
+      "title": "Запустити відео",
+      "action": "execute:request:player:play"
+    }
+  ]
+}
