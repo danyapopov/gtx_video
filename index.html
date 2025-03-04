@@ -20,30 +20,33 @@
             height: 100%;
             position: absolute;
             z-index: 1;
-            visibility: visible; /* YouTube always stays active */
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
         }
         video {
             width: 100%;
             height: 100%;
             position: absolute;
             z-index: 2;
-            visibility: hidden; /* Instead of display: none */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
             background-color: black;
+            display: none; /* Initially hidden */
+        }
+        .visible {
+            display: block; /* Show when needed */
         }
     </style>
 </head>
 <body>
 
 <div id="video-container">
-    <!-- YouTube Video (Muted & Autoplayed in Background) -->
     <iframe 
         id="youtube-video" 
-        src="https://www.youtube.com/embed/PyFN_FYwqvc?autoplay=1&mute=1" 
+        src="https://www.youtube.com/embed/PyFN_FYwqvc?autoplay=1&mute=1&loop=1&playlist=PyFN_FYwqvc" 
         frameborder="0" 
         allow="autoplay">
     </iframe>
-
-    <!-- Splash Video (Overlayed) -->
     <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted></video>
 </div>
 
@@ -52,22 +55,34 @@
         let splashVideo = document.getElementById("splash-video");
         let youtubeVideo = document.getElementById("youtube-video");
 
-        // Make YouTube transparent (but keep it running)
-        youtubeVideo.style.visibility = "hidden";
-        
-        // Show and play the splash video
-        splashVideo.style.visibility = "visible";
-        splashVideo.play();
+        // Use display instead of opacity to avoid playback interruption
+        youtubeVideo.style.opacity = "0"; // Fade out YouTube
+        splashVideo.classList.add("visible"); // Show splash video
+        splashVideo.style.opacity = "1"; // Fade in splash
+        splashVideo.play().catch(err => {
+            console.log("Splash video failed to play:", err);
+            resetToYouTube(); // Fallback if splash fails
+        });
 
-        // When splash video ends, restore YouTube
         splashVideo.onended = function() {
-            splashVideo.style.visibility = "hidden";
-            youtubeVideo.style.visibility = "visible";
-            setTimeout(playSplashVideo, 15000); // Restart cycle
+            splashVideo.style.opacity = "0"; // Fade out splash
+            youtubeVideo.style.opacity = "1"; // Fade in YouTube
+            setTimeout(() => {
+                splashVideo.classList.remove("visible"); // Fully hide splash
+                setTimeout(playSplashVideo, 15000); // Restart cycle
+            }, 500); // Match transition duration
         };
     }
 
-    // Start the first splash video after 15 seconds
+    function resetToYouTube() {
+        let splashVideo = document.getElementById("splash-video");
+        let youtubeVideo = document.getElementById("youtube-video");
+        splashVideo.style.opacity = "0";
+        splashVideo.classList.remove("visible");
+        youtubeVideo.style.opacity = "1";
+    }
+
+    // Start the cycle after 15 seconds
     setTimeout(playSplashVideo, 15000);
 </script>
 
