@@ -7,19 +7,19 @@
     <style>
         body {
             margin: 0;
-            padding: 0; /* Ensure no padding interferes */
+            padding: 0;
             overflow: hidden;
             background-color: #1a1a1a; /* Dark gray theme */
         }
         #video-container {
-            width: 100vw; /* Full viewport width */
-            height: 100vh; /* Full viewport height */
+            width: 100vw;
+            height: 100vh;
             position: relative;
             background-color: #333333; /* Medium gray container */
         }
         iframe {
-            width: 100%; /* Fullscreen within container */
-            height: 100%; /* Fullscreen within container */
+            width: 100%;
+            height: 100%;
             position: absolute;
             z-index: 1;
             transition: opacity 1.5s ease-in-out; /* 1.5s fade */
@@ -27,18 +27,18 @@
             opacity: 1;
         }
         video {
-            width: 100%; /* Fullscreen within container */
-            height: 100%; /* Fullscreen within container */
+            width: 100%;
+            height: 100%;
             position: absolute;
             z-index: 2;
             opacity: 0;
             transition: opacity 1.5s ease-in-out; /* 1.5s fade */
             background-color: #1a1a1a; /* Match body */
-            display: none; /* Initially hidden */
-            object-fit: cover; /* Ensures video fills screen without distortion */
+            display: none;
+            object-fit: cover; /* Fullscreen scaling */
         }
         .visible {
-            display: block; /* Show when needed */
+            display: block;
         }
         .hidden-iframe {
             visibility: hidden; /* Hide iframe without pausing */
@@ -65,27 +65,24 @@
         let splashVideo = document.getElementById("splash-video");
         let youtubeVideo = document.getElementById("youtube-video");
 
-        // Hide YouTube iframe without pausing (use visibility + opacity)
         youtubeVideo.classList.add("hidden-iframe");
         youtubeVideo.style.opacity = "0"; // Fade out over 1.5s
 
-        // Show and play splash video
         splashVideo.classList.add("visible");
         splashVideo.style.opacity = "1"; // Fade in over 1.5s
         splashVideo.play().catch(err => {
             console.log("Splash video failed to play:", err);
-            resetToYouTube(); // Fallback if splash fails
+            resetToYouTube();
         });
 
-        // When splash video ends, restore YouTube visibility
         splashVideo.onended = function() {
             splashVideo.style.opacity = "0"; // Fade out over 1.5s
             youtubeVideo.classList.remove("hidden-iframe");
             youtubeVideo.style.opacity = "1"; // Fade in over 1.5s
             setTimeout(() => {
-                splashVideo.classList.remove("visible"); // Fully hide splash
+                splashVideo.classList.remove("visible");
                 setTimeout(playSplashVideo, 15000); // Restart cycle
-            }, 1500); // Match 1.5s transition duration
+            }, 1500); // Match 1.5s transition
         };
     }
 
@@ -98,7 +95,6 @@
         youtubeVideo.style.opacity = "1";
     }
 
-    // Start the first splash video after 15 seconds
     setTimeout(playSplashVideo, 15000);
 </script>
 
