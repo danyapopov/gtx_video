@@ -8,20 +8,22 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: black;
+            background-color: #1a1a1a;
         }
         #video-container {
             width: 100vw;
             height: 100vh;
             position: relative;
+            background-color: #333333;
         }
-        iframe {
+        #youtube-video {
             width: 100%;
             height: 100%;
             position: absolute;
             z-index: 1;
-            opacity: 1;
             transition: opacity 0.5s ease-in-out;
+            border: 2px solid #ffffff;
+            opacity: 1;
         }
         video {
             width: 100%;
@@ -30,47 +32,71 @@
             z-index: 2;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            background-color: black;
-            display: none; /* Initially hidden */
+            background-color: #1a1a1a;
+            display: none;
         }
         .visible {
-            display: block; /* Show when needed */
+            display: block;
         }
     </style>
 </head>
 <body>
 
 <div id="video-container">
-    <iframe 
-        id="youtube-video" 
-        src="https://www.youtube.com/embed/PyFN_FYwqvc?autoplay=1&mute=1&loop=1&playlist=PyFN_FYwqvc" 
-        frameborder="0" 
-        allow="autoplay">
-    </iframe>
+    <!-- YouTube Player Container -->
+    <div id="youtube-video"></div>
+
+    <!-- Splash Video -->
     <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted></video>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
+    let player;
+
+    // Initialize YouTube player
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player("youtube-video", {
+            width: "100%",
+            height: "100%",
+            videoId: "PyFN_FYwqvc",
+            playerVars: {
+                autoplay: 1,
+                mute: 1,
+                loop: 1,
+                playlist: "PyFN_FYwqvc" // Required for looping
+            },
+            events: {
+                onReady: onPlayerReady
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo(); // Ensure it starts
+        setTimeout(playSplashVideo, 15000); // Start splash cycle
+    }
+
     function playSplashVideo() {
         let splashVideo = document.getElementById("splash-video");
         let youtubeVideo = document.getElementById("youtube-video");
 
-        // Use display instead of opacity to avoid playback interruption
-        youtubeVideo.style.opacity = "0"; // Fade out YouTube
-        splashVideo.classList.add("visible"); // Show splash video
-        splashVideo.style.opacity = "1"; // Fade in splash
+        youtubeVideo.style.opacity = "0"; // Fade out
+        splashVideo.classList.add("visible");
+        splashVideo.style.opacity = "1";
         splashVideo.play().catch(err => {
             console.log("Splash video failed to play:", err);
-            resetToYouTube(); // Fallback if splash fails
+            resetToYouTube();
         });
 
         splashVideo.onended = function() {
-            splashVideo.style.opacity = "0"; // Fade out splash
-            youtubeVideo.style.opacity = "1"; // Fade in YouTube
+            splashVideo.style.opacity = "0";
+            youtubeVideo.style.opacity = "1";
+            player.playVideo(); // Explicitly resume YouTube
             setTimeout(() => {
-                splashVideo.classList.remove("visible"); // Fully hide splash
-                setTimeout(playSplashVideo, 15000); // Restart cycle
-            }, 500); // Match transition duration
+                splashVideo.classList.remove("visible");
+                setTimeout(playSplashVideo, 15000);
+            }, 500);
         };
     }
 
@@ -80,10 +106,8 @@
         splashVideo.style.opacity = "0";
         splashVideo.classList.remove("visible");
         youtubeVideo.style.opacity = "1";
+        player.playVideo(); // Ensure resumption
     }
-
-    // Start the cycle after 15 seconds
-    setTimeout(playSplashVideo, 15000);
 </script>
 
 </body>
