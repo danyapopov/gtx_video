@@ -44,7 +44,7 @@
     </div>
     <div id="splash">
         <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" 
-            autoplay playsinline></video>
+            autoplay playsinline muted></video>
     </div>
 
     <script>
@@ -55,6 +55,7 @@
             splash.style.display = "block";
             setTimeout(() => {
                 splash.style.opacity = "1";
+                splashVideo.currentTime = 0;
                 splashVideo.play();
             }, 10);
         }
