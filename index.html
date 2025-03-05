@@ -25,8 +25,8 @@
             width: 100vw;
             height: 100vh;
             background: black;
-            display: none;
-            opacity: 0;
+            display: block;
+            opacity: 1;
             transition: opacity 1s ease-in-out;
         }
         video {
@@ -44,21 +44,13 @@
     </div>
     <div id="splash">
         <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" 
-            autoplay playsinline muted></video>
+            autoplay playsinline muted preload="auto"></video>
     </div>
 
     <script>
         let splash = document.getElementById("splash");
         let splashVideo = document.getElementById("splash-video");
-
-        function showSplash() {
-            splash.style.display = "block";
-            setTimeout(() => {
-                splash.style.opacity = "1";
-                splashVideo.currentTime = 0;
-                splashVideo.play();
-            }, 10);
-        }
+        let youtubePlayer = document.getElementById("youtube-player");
 
         function hideSplash() {
             splash.style.opacity = "0";
@@ -69,9 +61,17 @@
 
         splashVideo.addEventListener("ended", hideSplash);
 
-        setInterval(showSplash, 15000);
+        setInterval(() => {
+            splash.style.display = "block";
+            setTimeout(() => {
+                splash.style.opacity = "1";
+                splashVideo.currentTime = 0;
+                splashVideo.play();
+            }, 10);
+        }, 15000);
 
         document.addEventListener("DOMContentLoaded", () => {
+            splashVideo.load(); // Ensure preloading starts immediately
             document.documentElement.requestFullscreen().catch(() => {});
         });
     </script>
