@@ -2,77 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-widthа, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://www.youtube.com https://raw.githubusercontent.com; script-src 'self' 'unsafe-inline' https://www.youtube.com; style-src 'self' 'unsafe-inline'; media-src 'self' https://raw.githubusercontent.com; frame-src https://www.youtube.com;">
-    <title>YouTube with Splash Overlay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Overlay</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: black;
-        }
-        #video-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+        * { margin: 0; padding: 0; overflow: hidden; }
+        body { background: black; }
+        .container {
+            position: relative;
             width: 100vw;
             height: 100vh;
         }
-        #splash {
+        iframe, video {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            display: none;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+        }
+        #overlay {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background: black;
         }
     </style>
 </head>
 <body>
-    <div id="video-container">
-        <iframe id="youtube-player" width="100%" height="100%" 
-            src="https://www.youtube.com/embed/NoEIriuS0H8?enablejsapi=1&autoplay=1&mute=1&rel=0&modestbranding=1&controls=0&showinfo=0&playsinline=1" 
-            frameborder="0" allowfullscreen allow="autoplay"></iframe>
-    </div>
-    <div id="splash">
-        <video id="splash-video" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" 
-            autoplay playsinline></video>
+    <div class="container">
+        <iframe id="youtube" src="https://www.youtube.com/embed/NoEIriuS0H8?autoplay=1&mute=1&loop=1&playlist=NoEIriuS0H8" frameborder="0" allowfullscreen></iframe>
+        <video id="overlay" src="https://raw.githubusercontent.com/danyapopov/gtx_video/main/splash.mp4" muted></video>
     </div>
 
     <script>
-        let splash = document.getElementById("splash");
-        let splashVideo = document.getElementById("splash-video");
+        const overlay = document.getElementById('overlay');
 
-        function showSplash() {
-            splash.style.display = "block";
-            setTimeout(() => {
-                splash.style.opacity = "1";
-                splashVideo.play();
-            }, 10);
+        function showOverlay() {
+            overlay.style.opacity = 1;
+            overlay.currentTime = 0;
+            overlay.play();
+            setTimeout(hideOverlay, 15000); // Ховаємо заставку через 15 секунд
         }
 
-        function hideSplash() {
-            splash.style.opacity = "0";
-            setTimeout(() => {
-                splash.style.display = "none";
-            }, 1000);
+        function hideOverlay() {
+            overlay.style.opacity = 0;
+            setTimeout(showOverlay, 15000); // Повторюємо цикл кожні 15 секунд після завершення заставки
         }
 
-        splashVideo.addEventListener("ended", hideSplash);
-
-        setInterval(showSplash, 15000);
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.documentElement.requestFullscreen().catch(() => {});
-        });
+        setTimeout(showOverlay, 15000); // Перший запуск заставки через 15 секунд
     </script>
 </body>
 </html>
